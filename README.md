@@ -155,3 +155,9 @@ written to the file. The export file is `cobbvision_<start epoch ms>.gpx` in the
 cache directory.
 
 The same format is produced by the iOS companion app, so the backend accepts either.
+
+## CobbVision family
+
+- [cobbvision-android](https://github.com/grioghar/cobbvision-android) — this repo: Android companion app (GPS track recorder).
+- [cobbvision-ios](https://github.com/grioghar/cobbvision-ios) — iOS companion app; records the same GPX track format.
+- [APi](https://github.com/grioghar/APi) — AccessPort Investigator: ingesting, processing, plotting and diagnostics for the Accessport `datalog*.csv` files themselves.
