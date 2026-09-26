@@ -33,6 +33,19 @@ jobs:
           gradle wrapper --gradle-version 8.7 || true
           chmod +x gradlew
 
+      # ── JVM unit tests (app/src/test) ─────────────────────────────────────
+      - name: Unit tests
+        run: ./gradlew test --no-daemon --stacktrace
+
+      - name: Upload unit test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-reports
+          path: app/build/reports/tests/
+          if-no-files-found: ignore
+          retention-days: 7
+
       # ── Assemble debug APK (no signing keystore needed) ───────────────────
       - name: Build debug APK
         run: ./gradlew assembleDebug --no-daemon --stacktrace

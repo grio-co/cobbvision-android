@@ -50,14 +50,11 @@ class LocationService : Service() {
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
             val session = _currentSession.value ?: return
-            val newPoints = result.locations
-                .filter { it.accuracy in 0f..30f }       // reject poor fixes
-                .map   { TrackPoint.from(it) }
-            if (newPoints.isNotEmpty()) {
-                _currentSession.value = session.copy(
-                    trackPoints = session.trackPoints + newPoints
-                )
-            }
+            // TrackRecorder rejects poor fixes (accuracy outside 0..30 m) and
+            // returns the same instance when nothing was accepted.
+            _currentSession.value = TrackRecorder.append(
+                session, result.locations.map { TrackPoint.from(it) }
+            )
         }
     }
 
@@ -104,9 +101,7 @@ class LocationService : Service() {
 
     private fun stopRecording() {
         fusedClient.removeLocationUpdates(locationCallback)
-        _currentSession.value = _currentSession.value?.copy(
-            endedAtMs = System.currentTimeMillis()
-        )
+        _currentSession.value = _currentSession.value?.let { TrackRecorder.finish(it) }
         _isRecording.value = false
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
